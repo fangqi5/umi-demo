@@ -71,13 +71,6 @@ const RuleWrapper = (props: any) => {
 const RULE_ITEM_SCHEMA: any = {
   type: 'object',
   'x-component': 'RuleItemWrapper',
-  'x-decorator': 'Row',
-  'x-decorator-props': {
-    gutter: 12,
-    style: {
-      width: '100%',
-    },
-  },
   properties: {
     title: {
       type: 'string',
@@ -140,7 +133,11 @@ const RuleItemWrapper = (props) => {
   console.log('🚀 ~ RuleWrapper ~ field =======>', field.address.entire);
   return (
     <div className="item-wrapper">
-      <div className="item-content">{props.children}</div>
+      <div className="item-content">
+        <Row gutter={12} style={{ width: '100%' }}>
+          {props.children}
+        </Row>
+      </div>
       <div className="footer">
         <Button
           style={{ marginLeft: 6, marginTop: 8, marginBottom: 0 }}
