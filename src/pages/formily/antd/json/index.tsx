@@ -1,4 +1,4 @@
-import React, { Children, lazy, useMemo } from 'react';
+import React, { Children, lazy, useEffect, useMemo } from 'react';
 import { Button, Select, Input, Form, Row, Col, Switch } from 'antd';
 import {
   AreaChartOutlined,
@@ -30,6 +30,7 @@ const form = createForm({
 // 自定义渲染数组项的组件
 const RuleWrapper = (props: any) => {
   const field = useField();
+  console.log('🚀 ~ RuleWrapper ~ field =======>', field.address.entire);
   return (
     <div className="wrapper">
       <div className="content">
@@ -70,18 +71,35 @@ const RuleWrapper = (props: any) => {
 const RULE_ITEM_SCHEMA: any = {
   type: 'object',
   'x-component': 'RuleItemWrapper',
+  'x-decorator': 'Row',
+  'x-decorator-props': {
+    gutter: 12,
+    style: {
+      width: '100%',
+    },
+  },
   properties: {
     title: {
       type: 'string',
-      'x-decorator': 'FormItem',
+      'x-decorator': 'Col',
       'x-component': 'Input',
       'x-component-props': {},
+      'x-decorator-props': {
+        span: 4,
+      },
     },
     name: {
       type: 'string',
-      'x-decorator': 'FormItem',
+      'x-decorator': 'Col',
       'x-component': 'Select',
-      'x-component-props': {},
+      'x-component-props': {
+        style: {
+          width: '100%',
+        },
+      },
+      'x-decorator-props': {
+        span: 4,
+      },
     },
     children: {
       // 这里可以继续嵌套
@@ -91,6 +109,16 @@ const RULE_ITEM_SCHEMA: any = {
   },
 };
 const RULE_GROUP_SCHEMA = {
+  type: 'object',
+  'x-component': 'RuleWrapper',
+  properties: {
+    children: {
+      type: 'array',
+      'x-component': 'ArrayWrapper',
+    },
+  },
+};
+const ROOT_SCHEMA = {
   type: 'object',
   properties: {
     rules: {
@@ -107,9 +135,24 @@ const RULE_GROUP_SCHEMA = {
 };
 
 const RuleItemWrapper = (props) => {
+  const field = useField();
+
+  console.log('🚀 ~ RuleWrapper ~ field =======>', field.address.entire);
   return (
     <div className="item-wrapper">
       <div className="item-content">{props.children}</div>
+      <div className="footer">
+        <Button
+          style={{ marginLeft: 6, marginTop: 8, marginBottom: 0 }}
+          onClick={() => {
+            form.setFieldState(`${field.address.entire}.name`, (state) => {
+              state.component = 'Switch';
+            });
+          }}
+        >
+          替换组件类型
+        </Button>
+      </div>
     </div>
   );
 };
@@ -152,7 +195,7 @@ const SchemaField = createSchemaField({
 const App = () => {
   return (
     <FormProvider form={form}>
-      <SchemaField schema={RULE_GROUP_SCHEMA} />
+      <SchemaField schema={ROOT_SCHEMA} />
       <Row gutter={12}>
         <Col span={6}>
           <Button

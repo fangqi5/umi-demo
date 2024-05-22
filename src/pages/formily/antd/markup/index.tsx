@@ -19,6 +19,14 @@ import 'antd/dist/antd.css';
 import './index.less';
 const FormItem = Form.Item;
 
+const form = createForm({
+  initialValues: {
+    rules: {
+      children: [],
+    },
+  },
+});
+
 // 自定义渲染数组项的组件
 const RuleWrapper = (props: any) => {
   const field = useField();
@@ -69,14 +77,14 @@ const ArrayWrapper = observer((props: any) => {
   const { SchemaField, form, layer, parentName } = props || {};
   const field = useField();
   console.log(
-    `🚀 ~ ArrayWrapper ~ props ${layer} =======>`,
+    '🚀 ~ ArrayWrapper ~ field.value =======>',
     field.address.entire,
-    props,
+    field,
   );
+  return field.value?.map((item) => 11111) || '222';
   if (!field.value || !Array.isArray(field.value)) return null;
   return field.value?.map((item: any, index: number) => {
     const { type = 'item' } = item;
-    console.log('🚀 ~ returnfield.value?.map ~ item =======>', item);
     const renderItem = () => {
       return (
         <SchemaField.Void x-component="RuleItemWrapper">
@@ -119,9 +127,7 @@ const ArrayWrapper = observer((props: any) => {
           name="children"
           x-component="ArrayWrapper"
           x-component-props={{
-            form,
             SchemaField,
-            layer: layer + 1,
           }}
         />
       </SchemaField.Void>;
@@ -150,14 +156,6 @@ const SchemaField = createSchemaField({
     RuleItemWrapper,
   },
 });
-
-const form = createForm({
-  initialValues: {
-    rules: {
-      children: [],
-    },
-  },
-});
 const App = () => {
   return (
     <FormProvider form={form}>
@@ -167,12 +165,9 @@ const App = () => {
             name={'children'}
             x-component="ArrayWrapper"
             x-component-props={{
-              form,
               SchemaField,
-              layer: 1,
-              parentName: 'children',
             }}
-          />
+          ></SchemaField.Array>
         </SchemaField.Object>
       </SchemaField>
       <Row gutter={12}>
